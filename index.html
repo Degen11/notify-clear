@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badge Buster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #141420;
+      --surface-alt: #1a1a2e;
+      --text: #e8e8f0;
+      --text-dim: #8888a0;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --danger: #ff3b30;
+      --badge-pop: #ff3b30;
+      --phone-body: #1c1c2a;
+      --phone-screen: #111118;
+      --icon-color: rgba(140, 140, 180, 0.25);
+      --dock-bg: rgba(255, 255, 255, 0.04);
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(99, 60, 220, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Layout ─── */
+    .page {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+      gap: 80px;
+    }
+
+    .demo-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      flex-shrink: 0;
+    }
+
+    .text-side {
+      max-width: 460px;
+    }
+
+    /* ─── Phone Mockup ─── */
+    .phone {
+      width: 220px;
+      height: 440px;
+      background: var(--phone-body);
+      border-radius: 40px;
+      padding: 14px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 80px rgba(59, 130, 246, 0.08);
+      transition: box-shadow 0.4s ease;
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      z-index: 2;
+    }
+
+    .phone.clearing {
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 100px rgba(59, 130, 246, 0.2);
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: var(--phone-screen);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 34px 14px 10px;
+    }
+
+    .app-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    .app-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .app-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .app-icon:nth-child(1) { background: rgba(59, 130, 246, 0.35); }
+    .app-icon:nth-child(2) { background: rgba(52, 199, 89, 0.3); }
+    .app-icon:nth-child(3) { background: rgba(255, 149, 0, 0.3); }
+    .app-icon:nth-child(4) { background: rgba(175, 82, 222, 0.3); }
+
+    .dock {
+      background: var(--dock-bg);
+      border-radius: 18px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .dock .app-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    .dock .app-icon:nth-child(1) { background: rgba(52, 199, 89, 0.35); }
+    .dock .app-icon:nth-child(2) { background: rgba(59, 130, 246, 0.35); }
+    .dock .app-icon:nth-child(3) { background: rgba(255, 59, 48, 0.3); }
+    .dock .app-icon:nth-child(4) { background: rgba(255, 204, 0, 0.3); }
+
+    /* ─── Badges ─── */
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      background: var(--badge-pop);
+      border-radius: 50%;
+      border: 2px solid var(--phone-screen);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    .badge.hidden {
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    .badge.pop {
+      animation: badge-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes badge-pop {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ─── Clear Button ─── */
+    .clear-btn {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      padding: 14px 48px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clear-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 30px var(--accent-glow);
+      background: #4b8ff7;
+    }
+
+    .clear-btn:active {
+      transform: translateY(0) scale(0.97);
+    }
+
+    .clear-btn.cleared {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--text-dim);
+      box-shadow: none;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .clear-btn.cleared::after {
+      content: '✓';
+      margin-left: 6px;
+    }
+
+    /* ─── Text Side ─── */
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 48px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e8e8f0 30%, #8888a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--text-dim);
+      margin-bottom: 40px;
+    }
+
+    .concept-label {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .section-block {
+      margin-bottom: 32px;
+    }
+
+    .section-block h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-block p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-dim);
+    }
+
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 1px;
+      margin-bottom: 32px;
+    }
+
+    .footnote {
+      font-size: 13px;
+      color: rgba(136, 136, 160, 0.5);
+      margin-top: 40px;
+    }
+
+    .footnote a {
+      color: rgba(59, 130, 246, 0.6);
+      text-decoration: none;
+    }
+
+    .footnote a:hover {
+      color: var(--accent);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 820px) {
+      .page {
+        flex-direction: column;
+        gap: 48px;
+        padding: 60px 24px 40px;
+      }
+
+      h1 { font-size: 36px; }
+
+      .text-side {
+        text-align: center;
+        max-width: 500px;
+      }
+
+      .divider { margin-left: auto; margin-right: auto; }
+      .concept-label { margin-left: auto; margin-right: auto; }
+    }
+
+    /* ─── Entrance animations ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fade-up 0.7s ease forwards;
+    }
+
+    .fade-up-d1 { animation-delay: 0.1s; }
+    .fade-up-d2 { animation-delay: 0.25s; }
+    .fade-up-d3 { animation-delay: 0.4s; }
+    .fade-up-d4 { animation-delay: 0.55s; }
+    .fade-up-d5 { animation-delay: 0.7s; }
+
+    @keyframes fade-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .phone-entrance {
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+      animation: phone-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+
+    @keyframes phone-in {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Left: Demo -->
+    <div class="demo-side">
+      <div class="phone phone-entrance" id="phone">
+        <div class="screen">
+          <div class="app-grid">
+            <div class="app-row">
+              <div class="app-icon"><span class="badge pop">3</span></div>
+              <div class="app-icon"><span class="badge pop">12</span></div>
+              <div class="app-icon"><span class="badge pop">1</span></div>
+              <div class="app-icon"><span class="badge pop">5</span></div>
+            </div>
+            <div class="app-row">
+              <div class="app-icon"><span class="badge pop">8</span></div>
+              <div class="app-icon"></div>
+              <div class="app-icon"><span class="badge pop">2</span></div>
+              <div class="app-icon"></div>
+            </div>
+            <div class="app-row">
+              <div class="app-icon"></div>
+              <div class="app-icon"><span class="badge pop">99</span></div>
+              <div class="app-icon"></div>
+              <div class="app-icon"><span class="badge pop">7</span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <div class="app-icon"><span class="badge pop">24</span></div>
+            <div class="app-icon"><span class="badge pop">6</span></div>
+            <div class="app-icon"></div>
+            <div class="app-icon"><span class="badge pop">41</span></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="clear-btn fade-up fade-up-d3" id="clearBtn" onclick="clearBadges()">
+        Clear All Badges
+      </button>
+    </div>
+
+    <!-- Right: Copy -->
+    <div class="text-side">
+      <div class="concept-label fade-up fade-up-d1">Concept</div>
+      <h1 class="fade-up fade-up-d2">Badge Buster</h1>
+      <p class="tagline fade-up fade-up-d3">
+        One tap to wipe every red dot off your home screen. A clean slate for your phone, and your head.
+      </p>
+
+      <div class="divider fade-up fade-up-d3"></div>
+
+      <div class="section-block fade-up fade-up-d4">
+        <h2>The idea</h2>
+        <p>
+          You know that creeping anxiety when your home screen is littered with red notification badges? 
+          12 unread emails, 99+ messages, 5 app updates you'll never install. Badge Buster is built around 
+          a dead-simple premise — hit one button and make all of that disappear.
+        </p>
+      </div>
+
+      <div class="section-block fade-up fade-up-d4">
+        <h2>Why it's a concept</h2>
+        <p>
+          Here's the catch: iOS and Android sandbox every app for security and privacy. No app can reach 
+          into another app's notification badges and clear them. It's just not how mobile operating systems 
+          work. So Badge Buster will never be a real product — it's a design exploration of what the UX 
+          <em>could</em> feel like if that restriction didn't exist.
+        </p>
+      </div>
+
+      <div class="section-block fade-up fade-up-d5">
+        <h2>The frustration it reflects</h2>
+        <p>
+          Badge fatigue is real. Those little red circles are designed to pull you back into apps, and most 
+          of the time they're noise, not signal. Badge Buster is a nod to the shared desire for a calmer, 
+          less demanding phone experience.
+        </p>
+      </div>
+
+      <p class="footnote fade-up fade-up-d5">
+        Built by <a href="https://github.com/degenhill" target="_blank" rel="noopener">Degen Hill</a> 
+        &nbsp;·&nbsp; A UX concept, not a shipping product.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let cleared = false;
+
+    function clearBadges() {
+      if (cleared) return;
+
+      const phone = document.getElementById('phone');
+      const btn = document.getElementById('clearBtn');
+      const badges = document.querySelectorAll('.badge');
+
+      phone.classList.add('clearing');
+
+      // Stagger-remove badges
+      badges.forEach((badge, i) => {
+        setTimeout(() => {
+          badge.classList.add('hidden');
+        }, i * 60);
+      });
+
+      // Update button after all badges are gone
+      setTimeout(() => {
+        btn.textContent = 'All Clear';
+        btn.classList.add('cleared');
+        cleared = true;
+
+        // Reset after a few seconds
+        setTimeout(() => {
+          resetBadges();
+        }, 3000);
+      }, badges.length * 60 + 300);
+    }
+
+    function resetBadges() {
+      const phone = document.getElementById('phone');
+      const btn = document.getElementById('clearBtn');
+      const badges = document.querySelectorAll('.badge');
+
+      phone.classList.remove('clearing');
+
+      badges.forEach((badge, i) => {
+        setTimeout(() => {
+          badge.classList.remove('hidden');
+          // Re-trigger pop animation
+          badge.classList.remove('pop');
+          void badge.offsetWidth; // force reflow
+          badge.classList.add('pop');
+        }, i * 80);
+      });
+
+      btn.textContent = 'Clear All Badges';
+      btn.classList.remove('cleared');
+      cleared = false;
+    }
+  </script>
+</body>
+</html>
