@@ -83,7 +83,7 @@ function AboutBubble({ children }: { children: React.ReactNode }) {
   return <View style={styles.bubble}>{children}</View>;
 }
 
-function Separator({ light = False }: { light?: boolean }) {
+function Separator({ light = false }: { light?: boolean }) {
   return (
     <View
       style={[
