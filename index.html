@@ -91,9 +91,10 @@
       border-radius: 40px;
       padding: 14px;
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        0 0 80px rgba(59, 130, 246, 0.08);
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(59, 130, 246, 0.18),
+        0 0 120px rgba(59, 130, 246, 0.10);
       transition: box-shadow 0.4s ease;
       position: relative;
     }
@@ -111,11 +112,22 @@
       z-index: 2;
     }
 
+    .phone::after {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      border-radius: 80px;
+      background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
     .phone.clearing {
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        0 0 100px rgba(59, 130, 246, 0.2);
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(59, 130, 246, 0.35),
+        0 0 160px rgba(59, 130, 246, 0.18);
     }
 
     .screen {
@@ -450,31 +462,31 @@
 
       <div class="divider fade-up fade-up-d3"></div>
 
-     <div class="section-block fade-up fade-up-d4">
-  <h2>The idea</h2>
-  <p>
-    You know that creeping anxiety when your home screen is littered with red badges? 
-    12 unread emails, 99+ messages, 5 updates you'll never install. Badge Buster's 
-    premise is dead simple — one button, all of it gone.
-  </p>
-</div>
-<div class="section-block fade-up fade-up-d4">
-  <h2>Why it's a concept</h2>
-  <p>
-    iOS and Android sandbox every app for security reasons, meaning no app can reach 
-    into another's notification badges and clear them. So Badge Buster will never ship 
-    — it's a design exploration of what the UX <em>could</em> feel like if that 
-    restriction didn't exist.
-  </p>
-</div>
-<div class="section-block fade-up fade-up-d5">
-  <h2>The frustration it reflects</h2>
-  <p>
-    Those little red circles are engineered to pull you back in. Most of the time 
-    they're noise, not signal. Badge Buster is a nod to the shared desire for a 
-    calmer, less demanding phone.
-  </p>
-</div>
+      <div class="section-block fade-up fade-up-d4">
+        <h2>The idea</h2>
+        <p>
+          You know that creeping anxiety when your home screen is littered with red badges? 
+          12 unread emails, 99+ messages, 5 updates you'll never install. Badge Buster's 
+          premise is dead simple — one button, all of it gone.
+        </p>
+      </div>
+      <div class="section-block fade-up fade-up-d4">
+        <h2>Why it's a concept</h2>
+        <p>
+          iOS and Android sandbox every app for security reasons, meaning no app can reach 
+          into another's notification badges and clear them. So Badge Buster will never ship 
+          — it's a design exploration of what the UX <em>could</em> feel like if that 
+          restriction didn't exist.
+        </p>
+      </div>
+      <div class="section-block fade-up fade-up-d5">
+        <h2>The frustration it reflects</h2>
+        <p>
+          Those little red circles are engineered to pull you back in. Most of the time 
+          they're noise, not signal. Badge Buster is a nod to the shared desire for a 
+          calmer, less demanding phone.
+        </p>
+      </div>
 
       <p class="footnote fade-up fade-up-d5">
         Built by <a href="https://github.com/Degen11" target="_blank" rel="noopener">Degen Hill</a> 
